@@ -1,0 +1,181 @@
+openapi: "3.1.0"
+info:
+  title: "Orizn Visa API"
+  description: "Visa requirements for 39,585 passport-destination pairs in 15 languages. Data from 136 official government sources."
+  version: "1.0.0"
+servers:
+  - url: "https://visa.orizn.app"
+paths:
+  /api/v1/visa/check:
+    get:
+      operationId: "quickVisaCheck"
+      summary: "Quick check if a visa is required between two countries"
+      description: "Returns the visa requirement type and allowed stay duration. No API key needed."
+      parameters:
+        - name: passport
+          in: query
+          required: true
+          schema:
+            type: string
+            pattern: "^[A-Z]{3}$"
+          description: "ISO 3166-1 alpha-3 code of the passport country (e.g., FRA, USA, JPN)"
+        - name: destination
+          in: query
+          required: true
+          schema:
+            type: string
+            pattern: "^[A-Z]{3}$"
+          description: "ISO 3166-1 alpha-3 code of the destination country (e.g., THA, BRA, GBR)"
+      responses:
+        "200":
+          description: "Visa requirement check result"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      passport:
+                        type: string
+                        description: "Passport country code"
+                      destination:
+                        type: string
+                        description: "Destination country code"
+                      requirement:
+                        type: string
+                        enum: [visa_free, visa_required, e_visa, visa_on_arrival, eta, no_admission]
+                        description: "Visa requirement type"
+                      visa_free_days:
+                        type: integer
+                        nullable: true
+                        description: "Number of visa-free days allowed, if applicable"
+                      visa_required:
+                        type: boolean
+                        description: "Whether a visa is required"
+        "404":
+          description: "Country pair not found"
+  /api/v1/visa:
+    get:
+      operationId: "getFullVisaDetails"
+      summary: "Get full visa details including documents, process, and tips"
+      description: "Returns comprehensive visa requirements with required documents, application process, travel tips, and country info. Requires API key."
+      parameters:
+        - name: passport
+          in: query
+          required: true
+          schema:
+            type: string
+            pattern: "^[A-Z]{3}$"
+          description: "ISO 3166-1 alpha-3 code of the passport country"
+        - name: destination
+          in: query
+          required: true
+          schema:
+            type: string
+            pattern: "^[A-Z]{3}$"
+          description: "ISO 3166-1 alpha-3 code of the destination country"
+        - name: lang
+          in: query
+          required: false
+          schema:
+            type: string
+            enum: [en, fr, es, pt, de, ja, ko, zh, ru, it, ar, hi, th, vi, tl]
+            default: en
+          description: "Language for the response. 15 languages supported."
+      responses:
+        "200":
+          description: "Full visa details including documents, process, tips, and country info"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      passport:
+                        type: string
+                      destination:
+                        type: string
+                      requirement:
+                        type: string
+                        enum: [visa_free, visa_required, e_visa, visa_on_arrival, eta, no_admission]
+                      visa_free_days:
+                        type: integer
+                        nullable: true
+                      visa_required:
+                        type: boolean
+                      description:
+                        type: string
+                        description: "Human-readable summary of the visa requirement"
+                      documents_required:
+                        type: array
+                        items:
+                          type: string
+                        description: "List of required documents"
+                      process:
+                        type: array
+                        items:
+                          type: string
+                        description: "Step-by-step application process"
+                      tips:
+                        type: array
+                        items:
+                          type: string
+                        description: "Travel tips and recommendations"
+                      country_info:
+                        type: object
+                        properties:
+                          currency:
+                            type: string
+                          language:
+                            type: string
+                          timezone:
+                            type: string
+                          capital:
+                            type: string
+                      verified:
+                        type: boolean
+                  meta:
+                    type: object
+                    properties:
+                      lang:
+                        type: string
+                      api_version:
+                        type: string
+                      coverage:
+                        type: string
+                      languages:
+                        type: integer
+        "401":
+          description: "Missing or invalid API key"
+        "404":
+          description: "Country pair not found"
+  /api/v1/visa/stats:
+    get:
+      operationId: "getCoverageStats"
+      summary: "Get API coverage statistics"
+      description: "Returns total number of visa pairs, passports, destinations, and languages supported. No API key needed."
+      responses:
+        "200":
+          description: "Coverage statistics"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      total_pairs:
+                        type: integer
+                      passports:
+                        type: integer
+                      destinations:
+                        type: integer
+                      languages:
+                        type: integer
+                      sources:
+                        type: integer
