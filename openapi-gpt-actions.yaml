@@ -10,7 +10,7 @@ paths:
     get:
       operationId: "quickVisaCheck"
       summary: "Quick check if a visa is required between two countries"
-      description: "Returns the visa requirement type and allowed stay duration. No API key needed."
+      description: "Returns the visa requirement type and allowed stay duration. Requires a free API key."
       parameters:
         - name: passport
           in: query
