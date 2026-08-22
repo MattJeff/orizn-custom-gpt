@@ -1,7 +1,7 @@
 openapi: "3.1.0"
 info:
   title: "Orizn Visa API"
-  description: "Visa requirements for 39,585 passport-destination pairs in 15 languages. Data from 136 official government sources."
+  description: "Visa requirements for any passport/destination pair in 15 languages, from official government sources. Every endpoint below except /stats requires an API key (free at https://visa.orizn.app/visa-api, 50 requests/month)."
   version: "1.0.0"
 servers:
   - url: "https://visa.orizn.app"
@@ -34,26 +34,32 @@ paths:
               schema:
                 type: object
                 properties:
-                  data:
-                    type: object
-                    properties:
-                      passport:
-                        type: string
-                        description: "Passport country code"
-                      destination:
-                        type: string
-                        description: "Destination country code"
-                      requirement:
-                        type: string
-                        enum: [visa_free, visa_required, e_visa, visa_on_arrival, eta, no_admission]
-                        description: "Visa requirement type"
-                      visa_free_days:
-                        type: integer
-                        nullable: true
-                        description: "Number of visa-free days allowed, if applicable"
-                      visa_required:
-                        type: boolean
-                        description: "Whether a visa is required"
+                  passport:
+                    type: string
+                    description: "Passport country code"
+                  destination:
+                    type: string
+                    description: "Destination country code"
+                  requirement:
+                    type: string
+                    description: "Visa requirement type: visa_free, visa_required, e_visa, visa_on_arrival, eta, no_admission — a few pairs also return not_applicable or partial_restrictions"
+                  visa_free_days:
+                    type: integer
+                    nullable: true
+                    description: "Number of days allowed without a visa, if applicable"
+                  visa_required:
+                    type: boolean
+                    description: "Whether a visa must be obtained before travelling"
+                  last_verified:
+                    type: string
+                    nullable: true
+                    description: "Date this pair was last verified (YYYY-MM-DD), null when unknown"
+        "401":
+          description: "Missing API key"
+        "403":
+          description: "Invalid or inactive API key"
+        "429":
+          description: "Monthly quota reached — the body carries an upgrade_url"
         "404":
           description: "Country pair not found"
   /api/v1/visa:
@@ -83,7 +89,7 @@ paths:
             type: string
             enum: [en, fr, es, pt, de, ja, ko, zh, ru, it, ar, hi, th, vi, tl]
             default: en
-          description: "Language for the response. 15 languages supported."
+          description: "Language of the answer. All 15 languages are available on every plan, including the free tier."
       responses:
         "200":
           description: "Full visa details including documents, process, tips, and country info"
@@ -101,7 +107,7 @@ paths:
                         type: string
                       requirement:
                         type: string
-                        enum: [visa_free, visa_required, e_visa, visa_on_arrival, eta, no_admission]
+                        description: "visa_free, visa_required, e_visa, visa_on_arrival, eta, no_admission — a few pairs also return not_applicable or partial_restrictions"
                       visa_free_days:
                         type: integer
                         nullable: true
@@ -120,6 +126,18 @@ paths:
                         items:
                           type: string
                         description: "Step-by-step application process"
+                      cost:
+                        type: string
+                        description: "Visa cost, as returned by the API (free text, may be empty)"
+                      processing_time:
+                        type: string
+                        description: "Typical processing time (free text, may be empty)"
+                      validity:
+                        type: string
+                        description: "How long the visa stays valid (free text, may be empty)"
+                      max_stay:
+                        type: string
+                        description: "Maximum stay allowed (free text, may be empty)"
                       tips:
                         type: array
                         items:
@@ -157,7 +175,7 @@ paths:
     get:
       operationId: "getCoverageStats"
       summary: "Get API coverage statistics"
-      description: "Returns total number of visa pairs, passports, destinations, and languages supported. No API key needed."
+      description: "Returns how many pairs, passports, destinations and translations the dataset holds. No API key needed."
       responses:
         "200":
           description: "Coverage statistics"
@@ -166,16 +184,35 @@ paths:
               schema:
                 type: object
                 properties:
-                  data:
+                  coverage:
                     type: object
                     properties:
-                      total_pairs:
+                      visa_details:
                         type: integer
                       passports:
                         type: integer
                       destinations:
                         type: integer
+                      passport_index_pairs:
+                        type: integer
+                      translations:
+                        type: integer
                       languages:
                         type: integer
-                      sources:
-                        type: integer
+                  supported_languages:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: string
+                        name:
+                          type: string
+                  requirement_distribution:
+                    type: object
+                    additionalProperties:
+                      type: integer
+                  api_version:
+                    type: string
+                  docs:
+                    type: string
