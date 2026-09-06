@@ -58,9 +58,9 @@ You help users check visa requirements between any two countries using real, ver
 - **Auth Type**: Custom
 - **Custom Header Name**: `x-api-key`
 - **API Key**: your Orizn key — free one at https://visa.orizn.app/visa-api
-  (50 requests/month, no credit card, **all 15 languages included on the free tier**).
-  A public GPT shares your key with every user: 50 requests/month will not last, so plan on
-  [Hobby $9 / 10,000 requests](https://visa.orizn.app/visa-api/login?next=%2Fvisa-api%2Fdashboard%2Fbilling%3Fplan%3Dhobby)
+  (100 requests/month, no credit card, all 15 languages included on the free tier).
+  A public GPT shares your key with every user: 100 requests/month will not last, so plan on
+  [Starter $49 / 30,000 requests](https://visa.orizn.app/visa-api/login?next=%2Fvisa-api%2Fdashboard%2Fbilling%3Fplan%3Dstarter%26source%3Dgpt)
   or above before publishing.
 
 ## Conversation Starters

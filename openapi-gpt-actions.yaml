@@ -1,7 +1,7 @@
 openapi: "3.1.0"
 info:
   title: "Orizn Visa API"
-  description: "Visa requirements for any passport/destination pair in 15 languages, from official government sources. Every endpoint below except /stats requires an API key (free at https://visa.orizn.app/visa-api, 50 requests/month)."
+  description: "Visa requirements for any passport/destination pair in 15 languages, from official government sources. Every endpoint below except /stats requires an API key (free at https://visa.orizn.app/visa-api, 100 requests/month)."
   version: "1.0.0"
 servers:
   - url: "https://visa.orizn.app"

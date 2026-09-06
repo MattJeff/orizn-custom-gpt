@@ -13,8 +13,8 @@ Visa requirements API for AI agents — passport/destination pairs in 15 languag
 Orizn Visa API provides instant access to visa requirements for passport/destination pairs (any passport/destination pair) in 15 languages. Data comes from official government sources and each pair carries the date it was last verified.
 
 Available integrations:
-- REST API with a free tier (50 req/month, instant key, no credit card) — https://visa.orizn.app/visa-api
-  All 15 languages are included on the free tier. Paid plans start at $9/month for 10,000 requests.
+- REST API with a free tier (100 req/month, instant key, no credit card) — https://visa.orizn.app/visa-api
+  All 15 languages are included on the free tier. Paid plans start at $49/month for 30,000 requests (Starter).
 - MCP Server (npm: orizn-visa-mcp) for Claude, Cursor, Codex, and any MCP client
 - LangChain tools (Python: langchain-orizn, JS: @orizn/langchain)
 - Custom GPT on the GPT Store
